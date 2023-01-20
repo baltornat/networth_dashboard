@@ -5,36 +5,30 @@ from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.express as px
 
+# Import CSV. Structure: Date/Incomings/Expenses/Categories/Notes
 mynw = pd.read_csv('./csv/mynetworth.csv', sep=',')
 
-categories = [
-
-]
-
-years = [
-    '2023'
-]
+categories = ['Clothes', 'Food', 'Other', 'Amazon', 'Bar', 'Gas', 'Medicines', 'Home', 'Friends', 'Presents', 'Technology', 'Phone', 'Transport', 'Vacation']
+years = ['2023']
 
 ### PRELIMINAR OPERATIONS ON THE DATAFRAME
-# Convert the date to datetime64
+# Convert date to datetime64
 mynw['Date'] = pd.to_datetime(mynw['Date'])
-# Fill NaN with 0
+# Fill NaN in Incomings and Expenses with 0
 mynw[['Incomings','Expenses']] = mynw[['Incomings','Expenses']].fillna(0)
-# Create daily networth
+# Create daily balance in a new column named 'Balance'
 mynw['Balance'] = (mynw['Incomings'] - mynw['Expenses']).cumsum()
 
 app = dash.Dash()
 
 app.layout = html.Div(children=[
     html.H1(children='Net Worth Dashboard'),
-    dcc.Dropdown(id='year-dropdown',
-        options=[{'label': i, 'value': i}
-            for i in years]),
-    dcc.Graph(id='expenses-graph')
+    dcc.Dropdown(id='year-dropdown', options=[{'label': i, 'value': i} for i in years]),
+    dcc.Graph(id='annual-trend-graph')
 ])
 
 @app.callback(
-    Output(component_id='expenses-graph', component_property='figure'),
+    Output(component_id='annual-trend-graph', component_property='figure'),
     Input(component_id='year-dropdown', component_property='value')
 )
 def line_chart(selected_year):
