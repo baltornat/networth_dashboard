@@ -1,6 +1,7 @@
 import dash
 import dash_html_components as html
 import dash_core_components as dcc
+import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.express as px
@@ -21,14 +22,30 @@ mynw['Categories'] = mynw['Categories'].where(mynw['Categories'].isin(categories
 # Create daily balance in a new column named 'Balance'
 mynw['Balance'] = (mynw['Incomings'] - mynw['Expenses']).cumsum()
 
-app = dash.Dash()
+app = dash.Dash(
+    __name__,
+    external_stylesheets=['./assets/style.css', dbc.themes.SANDSTONE],
+    suppress_callback_exceptions=True
+)
 
 app.layout = html.Div(children=[
     html.H1(children='Net Worth Dashboard'),
-    dcc.Dropdown(id='year-dropdown', options=[{'label': i, 'value': i} for i in years]),
-    dcc.Graph(id='annual-trend-graph'),
-    dcc.Graph(id='expenses-by-category-graph')
-])
+    dbc.Row([
+        dcc.Dropdown(id='year-dropdown', options=[{'label': i, 'value': i} for i in years]),
+    ], className='mb-4'),
+    dbc.Row([
+        dbc.Col(
+            dcc.Graph(id='annual-trend-graph'),
+            md=6
+        ),
+        dbc.Col(
+            dcc.Graph(id='expenses-by-category-graph'),
+            md=6
+        )
+    ], className='mb-4')
+], style={'background-color': '#C7BEC7',
+          'width': 'auto',
+          'padding': '25px'})
 
 # Annual Trend
 @app.callback(
