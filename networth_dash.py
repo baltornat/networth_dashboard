@@ -42,7 +42,11 @@ app.layout = html.Div(children=[
             dcc.Graph(id='expenses-by-category-graph'),
             md=6
         )
-    ], className='mb-4')
+    ], className='mb-4'),
+    dbc.Row([
+        html.H1(f"Total incomings: {mynw['Incomings'].sum()}€"),
+        html.H1(f"Total expenses: {mynw['Expenses'].sum()}€")
+    ], className='mb-4'),
 ], style={'background-color': '#C7BEC7',
           'width': 'auto',
           'padding': '25px'})
